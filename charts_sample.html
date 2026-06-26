@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Finance Dashboards | ROE Focus | 5 Mockups</title>
+    <!-- Chart.js CDN for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 2rem 1.5rem;
+        }
+
+        /* main container */
+        .dashboards-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        /* each dashboard card */
+        .dashboard-card {
+            flex: 1 1 480px;
+            min-width: 360px;
+            border-radius: 28px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 28px 40px -14px rgba(0, 0, 0, 0.2);
+        }
+
+        /* inner content padding */
+        .dashboard-inner {
+            padding: 1.5rem 1.6rem 1.8rem 1.6rem;
+        }
+
+        /* header style */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.4rem;
+            flex-wrap: wrap;
+        }
+        .dashboard-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: -0.3px;
+        }
+        .badge-scheme {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.25rem 0.8rem;
+            border-radius: 40px;
+            background: rgba(255,255,240,0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        /* ROE main area */
+        .roe-primary {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.3rem;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 0.75rem;
+        }
+        .roe-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .roe-trend {
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
+            margin: 1.2rem 0 1.4rem 0;
+        }
+        .kpi-item {
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            padding: 0.6rem 0.8rem;
+            backdrop-filter: blur(2px);
+        }
+        .kpi-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+        .kpi-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+            line-height: 1.2;
+        }
+        .small-note {
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+            opacity: 0.7;
+        }
+
+        /* chart wrapper */
+        .chart-wrapper {
+            margin-top: 0.6rem;
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+        canvas {
+            max-height: 200px;
+            width: 100%;
+        }
+
+        .extra-footer {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 0.7rem;
+        }
+
+        /* DASHBOARD SPECIFIC THEMES (background & text) */
+        /* Dashboard 1 - Dark Navy & Emerald */
+        .theme-d1 {
+            background: linear-gradient(145deg, #0A192F 0%, #0F2137 100%);
+            color: #E6F1FF;
+        }
+        .theme-d1 .dashboard-inner { background: rgba(17, 34, 64, 0.75); backdrop-filter: blur(0px); }
+        .theme-d1 .kpi-item { background: rgba(44, 237, 138, 0.12); border: 1px solid rgba(44, 237, 138, 0.2); }
+        .theme-d1 .roe-value { color: #2CED8A; }
+        .theme-d1 .badge-scheme { background: #2CED8A20; color: #9effcf; }
+
+        /* Dashboard 2 - Light Corporate Blue */
+        .theme-d2 {
+            background: #EFF6FF;
+            color: #1A2C3E;
+        }
+        .theme-d2 .dashboard-inner { background: #FFFFFF; box-shadow: 0 4px 14px rgba(0,0,0,0.02); }
+        .theme-d2 .roe-value { color: #1E4B8F; }
+        .theme-d2 .badge-scheme { background: #D4E6FF; color: #0057A3; }
+
+        /* Dashboard 3 - Forest & Gold (DuPont elegance) */
+        .theme-d3 {
+            background: #F4F7EF;
+            color: #2C3E2B;
+        }
+        .theme-d3 .dashboard-inner { background: #FFFCF5; }
+        .theme-d3 .roe-value { color: #B8860B; }
+        .theme-d3 .badge-scheme { background: #F3E5C0; color: #7A5C2E; }
+
+        /* Dashboard 4 - Clean Gray & Teal */
+        .theme-d4 {
+            background: #F0F4F8;
+            color: #1E2F3F;
+        }
+        .theme-d4 .dashboard-inner { background: #FFFFFF; }
+        .theme-d4 .roe-value { color: #0F6B6B; }
+        .theme-d4 .badge-scheme { background: #D9F0F0; color: #0A5C5C; }
+
+        /* Dashboard 5 - Slate & Accent Orange */
+        .theme-d5 {
+            background: #1A2634;
+            color: #EDF2F7;
+        }
+        .theme-d5 .dashboard-inner { background: #243447; }
+        .theme-d5 .roe-value { color: #F39C12; }
+        .theme-d5 .kpi-item { background: rgba(243, 156, 18, 0.12); border: 1px solid rgba(243,156,18,0.25); }
+        .theme-d5 .badge-scheme { background: #F39C1230; color: #FFD966; }
+
+        /* common adjustments */
+        i.icon-accent { margin-right: 6px; }
+        hr { opacity: 0.2; margin: 12px 0; }
+        h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+<div class="dashboards-container">
+    
+    <!-- DASHBOARD 1 : Executive Navy & Emerald ROE Focus -->
+    <div class="dashboard-card theme-d1">
+        <div class="dashboard-inner">
+            <div class="dashboard-header">
+                <span class="dashboard-title"><i class="fas fa-chart-line icon-accent"></i> Executive ROE</span>
+                <span class="badge-scheme">Dark Navy · Emerald</span>
+            </div>
+            <div class="roe-primary">
+                <span class="roe-value">19.8%</span>
+                <span class="roe-trend"><i class="fas fa-arrow-up trend-up"></i> +2.1% vs LY</span>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-label">Net Income (TTM)</div><div class="kpi-number">$824M</div><div class="small-note">+12.3% YoY</div></div>
+                <div class="kpi-item"><div class="kpi-label">Shareholders Equity</div><div class="kpi-number">$4.16B</div><div class="small-note">Book value +8%</div></div>
+                <div class="kpi-item"><div class="kpi-label">ROIC</div><div class="kpi-number">14.6%</div><div class="small-note">Above WACC</div></div>
+                <div class="kpi-item"><div class="kpi-label">Debt/Equity</div><div class="kpi-number">0.42x</div><div class="small-note">Conservative</div></div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="roeChart1" width="400" height="180" style="width:100%; height:180px;"></canvas>
+            </div>
+            <div class="extra-footer"><i class="fas fa-chart-simple"></i> ROE trend + forecast · Sustainable growth momentum</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD 2 : Light Corporate Blue / ROE vs Segments -->
+    <div class="dashboard-card theme-d2">
+        <div class="dashboard-inner">
+            <div class="dashboard-header">
+                <span class="dashboard-title"><i class="fas fa-building icon-accent"></i> ROE Performance</span>
+                <span class="badge-scheme">Corporate Blue · Air</span>
+            </div>
+            <div class="roe-primary">
+                <span class="roe-value">24.2%</span>
+                <span class="roe-trend"><i class="fas fa-chart-line"></i> +3.2% vs Industry</span>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-label">Net Profit Margin</div><div class="kpi-number">18.3%</div></div>
+                <div class="kpi-item"><div class="kpi-label">Asset Turnover</div><div class="kpi-number">0.91x</div></div>
+                <div class="kpi-item"><div class="kpi-label">Equity Multiplier</div><div class="kpi-number">2.45x</div></div>
+                <div class="kpi-item"><div class="kpi-label">ROE (5Y avg)</div><div class="kpi-number">21.7%</div></div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="roeChart2" width="400" height="180" style="width:100%; height:180px;"></canvas>
+            </div>
+            <div class="extra-footer"><i class="fas fa-chart-column"></i> ROE by business segment · Retail leads at 25.1%</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD 3 : DuPont Forest & Gold -->
+    <div class="dashboard-card theme-d3">
+        <div class="dashboard-inner">
+            <div class="dashboard-header">
+                <span class="dashboard-title"><i class="fas fa-chart-pie icon-accent"></i> DuPont ROE Breakdown</span>
+                <span class="badge-scheme">Forest · Gold Accent</span>
+            </div>
+            <div class="roe-primary">
+                <span class="roe-value">30.9%</span>
+                <span class="roe-trend"><i class="fas fa-arrow-up trend-up"></i> +220bps QoQ</span>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-label">Net Margin</div><div class="kpi-number">22.0%</div><div class="small-note">↑ 1.4%</div></div>
+                <div class="kpi-item"><div class="kpi-label">Asset Turnover</div><div class="kpi-number">0.85x</div><div class="small-note">Efficiency focus</div></div>
+                <div class="kpi-item"><div class="kpi-label">Financial Leverage</div><div class="kpi-number">1.65x</div><div class="small-note">Moderate debt</div></div>
+                <div class="kpi-item"><div class="kpi-label">ROE (CAGR)</div><div class="kpi-number">15.2%</div><div class="small-note">3-year</div></div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="roeChart3" width="400" height="180" style="width:100%; height:180px;"></canvas>
+            </div>
+            <div class="extra-footer"><i class="fas fa-chart-area"></i> Historic ROE expansion · 5Y trend + superior returns</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD 4 : Clean Gray/Teal – ROE Target vs Peers -->
+    <div class="dashboard-card theme-d4">
+        <div class="dashboard-inner">
+            <div class="dashboard-header">
+                <span class="dashboard-title"><i class="fas fa-chart-gantt icon-accent"></i> ROE Benchmark</span>
+                <span class="badge-scheme">Minimal Teal · Gray</span>
+            </div>
+            <div class="roe-primary">
+                <span class="roe-value">16.5%</span>
+                <span class="roe-trend"><i class="fas fa-bullseye"></i> Target 18.0% · Gap -1.5%</span>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-label">Peer Avg ROE</div><div class="kpi-number">17.8%</div><div class="small-note">Sector median</div></div>
+                <div class="kpi-item"><div class="kpi-label">Revenue</div><div class="kpi-number">$2.1B</div><div class="small-note">+6.2%</div></div>
+                <div class="kpi-item"><div class="kpi-label">P/E Ratio</div><div class="kpi-number">14.3x</div><div class="small-note">Below market</div></div>
+                <div class="kpi-item"><div class="kpi-label">Dividend Payout</div><div class="kpi-number">32%</div><div class="small-note">Stable yield</div></div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="roeChart4" width="400" height="180" style="width:100%; height:180px;"></canvas>
+            </div>
+            <div class="extra-footer"><i class="fas fa-chart-line"></i> Actual ROE vs target quarterly · Closing the gap Q4 2025</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD 5 : Slate & High Contrast Orange -->
+    <div class="dashboard-card theme-d5">
+        <div class="dashboard-inner">
+            <div class="dashboard-header">
+                <span class="dashboard-title"><i class="fas fa-chart-scatter icon-accent"></i> Forward ROE Outlook</span>
+                <span class="badge-scheme">Slate · Orange</span>
+            </div>
+            <div class="roe-primary">
+                <span class="roe-value">12.8%</span>
+                <span class="roe-trend"><i class="fas fa-chart-line"></i> +1.3% vs prior Q</span>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-label">Net Income (LTM)</div><div class="kpi-number">$672M</div><div class="small-note">Growth 5.4%</div></div>
+                <div class="kpi-item"><div class="kpi-label">Common Equity</div><div class="kpi-number">$5.25B</div><div class="small-note">+2.1% QoQ</div></div>
+                <div class="kpi-item"><div class="kpi-label">ROE Forecast (FY)</div><div class="kpi-number">13.9%</div><div class="small-note">Consensus est.</div></div>
+                <div class="kpi-item"><div class="kpi-label">Risk Rating</div><div class="kpi-number">BB+</div><div class="small-note">Stable outlook</div></div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="roeChart5" width="400" height="180" style="width:100%; height:180px;"></canvas>
+            </div>
+            <div class="extra-footer"><i class="fas fa-chart-line"></i> ROE projection + operational levers · Improvement path</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // DASHBOARD 1 - Line chart: ROE trend + forecast (Dark Navy / emerald line)
+        const ctx1 = document.getElementById('roeChart1').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Q1 23', 'Q2 23', 'Q3 23', 'Q4 23', 'Q1 24', 'Q2 24 (f)'],
+                datasets: [{
+                    label: 'Return on Equity (%)',
+                    data: [17.2, 18.0, 18.9, 19.4, 20.1, 21.0],
+                    borderColor: '#2CED8A',
+                    backgroundColor: 'rgba(44, 237, 138, 0.08)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#2CED8A',
+                    pointBorderColor: '#0A192F',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { labels: { color: '#B9D0F0', font: { size: 10 } }, position: 'top' },
+                    tooltip: { backgroundColor: '#112240', titleColor: '#fff', bodyColor: '#cbd5e6' }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(200,220,255,0.1)' }, ticks: { color: '#B9D0F0' }, title: { display: true, text: 'ROE (%)', color: '#B9D0F0' } },
+                    x: { ticks: { color: '#B9D0F0' }, grid: { display: false } }
+                }
+            }
+        });
+
+        // DASHBOARD 2 - Bar chart: ROE by Segment (Corporate Blue)
+        const ctx2 = document.getElementById('roeChart2').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Retail', 'Corporate', 'International'],
+                datasets: [{
+                    label: 'ROE % by Segment',
+                    data: [23.5, 25.1, 21.8],
+                    backgroundColor: ['#3B82F6', '#4F46E5', '#0EA5E9'],
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 11 }, color: '#1E3A5F' } },
+                },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'ROE (%)', color: '#1E3A5F' }, grid: { color: '#e2e8f0' } },
+                    x: { ticks: { color: '#1E3A5F' } }
+                }
+            }
+        });
+
+        // DASHBOARD 3 - Area chart: Historic ROE (Forest / gold)
+        const ctx3 = document.getElementById('roeChart3').getContext('2d');
+        new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['2019', '2020', '2021', '2022', '2023'],
+                datasets: [{
+                    label: 'ROE (%) Historical',
+                    data: [18.5, 20.2, 25.8, 28.3, 30.9],
+                    fill: true,
+                    backgroundColor: 'rgba(184, 134, 11, 0.2)',
+                    borderColor: '#C58B2C',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#B8860B',
+                    pointBorderColor: '#FFF3E0',
+                    pointRadius: 4,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `ROE: ${ctx.raw}%` } },
+                    legend: { labels: { color: '#5D4E2B' } }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'Return on Equity (%)', color: '#5D4E2B' }, grid: { color: '#efe0c9' }, ticks: { color: '#5D4E2B' } },
+                    x: { ticks: { color: '#5D4E2B' } }
+                }
+            }
+        });
+
+        // DASHBOARD 4 - Dual line: Actual vs Target ROE (Teal/Gray)
+        const ctx4 = document.getElementById('roeChart4').getContext('2d');
+        new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: ['Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023'],
+                datasets: [
+                    {
+                        label: 'Actual ROE %',
+                        data: [15.2, 15.8, 16.1, 16.5],
+                        borderColor: '#008080',
+                        backgroundColor: 'rgba(0,128,128,0.05)',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#008080',
+                        tension: 0.2,
+                        fill: false
+                    },
+                    {
+                        label: 'Target ROE %',
+                        data: [18.0, 18.0, 18.0, 18.0],
+                        borderColor: '#F59E0B',
+                        borderWidth: 2.5,
+                        borderDash: [6, 6],
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } },
+                    legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10, color: '#1E2F3F' } }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'ROE (%)', color: '#1E2F3F' }, min: 14, max: 19.5, grid: { color: '#dee2e6' } },
+                    x: { ticks: { color: '#1E2F3F' } }
+                }
+            }
+        });
+
+        // DASHBOARD 5 - projection line chart: showing recovery & forward estimates (Slate / Orange accent)
+        const ctx5 = document.getElementById('roeChart5').getContext('2d');
+        new Chart(ctx5, {
+            type: 'line',
+            data: {
+                labels: ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25 (p)', 'Q2 25 (p)'],
+                datasets: [{
+                    label: 'ROE (%) Trailing & Forecast',
+                    data: [12.1, 12.0, 12.4, 13.0, 13.7, 14.5],
+                    borderColor: '#F39C12',
+                    backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#F39C12',
+                    pointBorderColor: '#243447',
+                    pointRadius: 4,
+                    tension: 0.2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { labels: { color: '#D1E0F0', font: { size: 10 } } },
+                    tooltip: { callbacks: { label: (ctx) => `ROE: ${ctx.raw}%` } }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,245,0.1)' }, ticks: { color: '#C0D0E3' }, title: { display: true, text: 'ROE %', color: '#DDD' } },
+                    x: { ticks: { color: '#C0D0E3' }, grid: { display: false } }
+                }
+            }
+        });
+    })();
+</script>
+<!-- Additional description: All dashboards present ROE as main KPI with supporting financial numbers,
+     color schemes optimized for finance: emerald, blue, gold/forest, teal, slate/orange.
+     Number formatting ensures clarity and mockup ready for presentations. -->
+</body>
+</html>

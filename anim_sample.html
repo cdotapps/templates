@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Principal Architect · Agentic AI</title>
+
+    <!-- Google Fonts (Inter + JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --rich-carbon: #111111;
+            --neural-fog: #f5f5f5;
+            --electric-teal: #3cdbd5;
+            --infrared: #e85d4a;
+            --pulse-ash: #888888;
+            --urban-smoke: #2a2a2a;
+            --header-height: 64px;
+            --radius: 20px;
+            --easing: cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background: var(--rich-carbon);
+            color: var(--neural-fog);
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        ul {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.02em;
+        }
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--pulse-ash);
+        }
+        .h1 {
+            font-size: clamp(2.6rem, 10vw, 4.8rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .h2 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+        }
+        .h3 {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        .body {
+            font-size: 1rem;
+            color: rgba(245, 245, 245, 0.7);
+        }
+        .body-sm {
+            font-size: 0.875rem;
+            color: rgba(245, 245, 245, 0.6);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0 20px;
+            height: 44px;
+            border: none;
+            background: transparent;
+            color: var(--neural-fog);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .btn .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            background: var(--neural-fog);
+            opacity: 0;
+            transform: translateX(-24px);
+            transition: all 0.4s var(--easing);
+        }
+        .btn:hover .dot {
+            opacity: 1;
+            transform: translateX(-5px);
+        }
+        .btn .label-wrap {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            transform: translateX(-5px);
+            transition: transform 0.4s var(--easing);
+        }
+        .btn:hover .label-wrap {
+            transform: translateX(5px);
+        }
+        .btn .label-wrap span {
+            display: inline-block;
+            transition: transform 0.4s var(--easing);
+        }
+        .btn .label-wrap .hover-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateY(100%);
+        }
+        .btn:hover .label-wrap .default-text {
+            transform: translateY(-100%);
+        }
+        .btn:hover .label-wrap .hover-text {
+            transform: translateY(0);
+        }
+        .btn .corner {
+            width: 9px;
+            height: 9px;
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+        }
+        .btn .corner svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .corner-svg {
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            background: transparent;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+        }
+        .header.scrolled {
+            background: rgba(17, 17, 17, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo .mark {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: var(--neural-fog);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            position: relative;
+        }
+        .logo .mark::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--rich-carbon);
+            clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(245, 245, 245, 0.6);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--neural-fog);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s var(--easing);
+        }
+        .nav a:hover {
+            color: var(--neural-fog);
+        }
+        .nav a:hover::after {
+            transform: scaleX(1);
+        }
+        .nav .btn {
+            padding: 0 16px;
+            height: 36px;
+            font-size: 0.7rem;
+            background: var(--neural-fog);
+            color: var(--rich-carbon);
+            border-radius: 4px;
+        }
+        .nav .btn .dot {
+            background: var(--rich-carbon);
+        }
+        .nav .btn:hover {
+            background: rgba(245, 245, 245, 0.9);
+        }
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--neural-fog);
+            transition: 0.3s ease;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            padding: var(--header-height) 0 40px;
+            overflow: hidden;
+        }
+        .hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+        }
+        .hero .label {
+            margin-bottom: 20px;
+            display: inline-block;
+            border-left: 2px solid var(--electric-teal);
+            padding-left: 16px;
+        }
+        .hero .h1 {
+            margin-bottom: 16px;
+        }
+        .hero .h1 .highlight {
+            color: var(--electric-teal);
+        }
+        .hero .body {
+            max-width: 520px;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px 24px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(245, 245, 245, 0.08);
+        }
+        .hero-stats .stat .number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--neural-fog);
+        }
+        .hero-stats .stat .label {
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 80px 0;
+        }
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .section-label .line {
+            flex: 1;
+            height: 1px;
+            background: rgba(245, 245, 245, 0.1);
+        }
+        .section-title {
+            margin-bottom: 16px;
+        }
+        .section-desc {
+            max-width: 520px;
+            margin-bottom: 48px;
+        }
+
+        /* ===== EXPERTISE GRID ===== */
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .expertise-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s var(--easing);
+        }
+        .expertise-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(60, 219, 213, 0.2);
+            transform: translateY(-2px);
+        }
+        .expertise-item .icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .expertise-item h4 {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .expertise-item p {
+            font-size: 0.8rem;
+            color: rgba(245, 245, 245, 0.5);
+        }
+
+        /* ===== PORTFOLIO CARDS (Swiper) ===== */
+        .portfolio-wrapper {
+            position: relative;
+            overflow: hidden;
+            margin: 0 -20px;
+            padding: 0 20px;
+        }
+        .swiper {
+            overflow: visible;
+        }
+        .swiper-slide {
+            height: auto;
+            width: 280px;
+        }
+        .portfolio-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.5s var(--easing);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .portfolio-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(60, 219, 213, 0.05), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s var(--easing);
+        }
+        .portfolio-card:hover::before {
+            opacity: 1;
+        }
+        .portfolio-card:hover {
+            border-color: rgba(60, 219, 213, 0.2);
+            transform: translateY(-4px);
+        }
+        .portfolio-card .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--electric-teal);
+            margin-bottom: 12px;
+            display: inline-block;
+            background: rgba(60, 219, 213, 0.08);
+            padding: 4px 12px;
+            border-radius: 20px;
+            align-self: flex-start;
+        }
+        .portfolio-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .portfolio-card p {
+            font-size: 0.9rem;
+            color: rgba(245, 245, 245, 0.6);
+            margin-bottom: 16px;
+            flex: 1;
+        }
+        .portfolio-card .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(245, 245, 245, 0.3);
+        }
+        .swiper-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .swiper-nav .btn {
+            padding: 0 16px;
+            height: 40px;
+            border: 1px solid rgba(245, 245, 245, 0.1);
+            border-radius: 4px;
+        }
+        .swiper-nav .btn:hover {
+            border-color: var(--electric-teal);
+        }
+
+        /* ===== CERTIFICATIONS ===== */
+        .certs-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .cert-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+        }
+        .cert-badge:hover {
+            background: rgba(60, 219, 213, 0.06);
+            border-color: rgba(60, 219, 213, 0.2);
+        }
+        .cert-badge .highlight {
+            color: var(--electric-teal);
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-section {
+            padding-bottom: 40px;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(245, 245, 245, 0.06);
+        }
+        .contact-grid .info p {
+            margin-bottom: 12px;
+        }
+        .contact-grid .info .mono {
+            color: var(--pulse-ash);
+            font-size: 0.85rem;
+        }
+        .contact-grid .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .contact-grid .links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(245, 245, 245, 0.6);
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contact-grid .links a:hover {
+            color: var(--neural-fog);
+        }
+        .contact-grid .links a .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .contact-grid .links a:hover .arrow {
+            transform: translateX(4px);
+        }
+        .footer-bottom {
+            padding-top: 32px;
+            margin-top: 32px;
+            border-top: 1px solid rgba(245, 245, 245, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: rgba(245, 245, 245, 0.3);
+        }
+        .footer-bottom a {
+            color: rgba(245, 245, 245, 0.4);
+            transition: color 0.3s ease;
+        }
+        .footer-bottom a:hover {
+            color: var(--neural-fog);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                background: rgba(17, 17, 17, 0.98);
+                padding: 24px 20px;
+                gap: 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            }
+            .nav.open {
+                display: flex;
+            }
+            .nav-toggle {
+                display: flex;
+            }
+            .hero .h1 {
+                font-size: clamp(2rem, 12vw, 3.2rem);
+            }
+            .hero-stats {
+                flex-wrap: wrap;
+                gap: 24px;
+            }
+            .hero-stats .stat .number {
+                font-size: 1.4rem;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            section {
+                padding: 60px 0;
+            }
+            .swiper-slide {
+                width: 260px;
+            }
+        }
+        @media (max-width: 480px) {
+            .expertise-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <a href="#" class="logo">
+                <span class="mark"></span>
+                <span>P·A</span>
+            </a>
+
+            <nav class="nav" id="nav">
+                <a href="#expertise">Expertise</a>
+                <a href="#portfolio">Work</a>
+                <a href="#certs">Certifications</a>
+                <a href="#contact" class="btn" style="padding:0 20px;height:36px;font-size:0.7rem;background:var(--neural-fog);color:var(--rich-carbon);border-radius:4px;">
+                    <span class="dot" style="background:var(--rich-carbon);"></span>
+                    <span class="label-wrap">
+                        <span class="default-text">Connect</span>
+                        <span class="hover-text">Connect</span>
+                    </span>
+                </a>
+            </nav>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== HERO with 3D Canvas ===== -->
+    <section class="hero" id="hero">
+        <div class="hero-canvas" id="heroCanvas"></div>
+        <div class="container hero-content">
+            <span class="label">Principal Architect · Agentic AI</span>
+            <h1 class="h1">
+                Architecting<br />
+                <span class="highlight">Agentic</span> Systems<br />
+                for Tomorrow
+            </h1>
+            <p class="body">
+                I design and build intelligent, autonomous systems that reason, adapt, and act.
+                Certified in Agentic AI — passionate about turning complex challenges into
+                elegant, scalable solutions.
+            </p>
+            <div class="hero-actions">
+                <a href="#portfolio" class="btn">
+                    <span class="dot"></span>
+                    <span class="label-wrap">
+                        <span class="default-text">View Work</span>
+                        <span class="hover-text">View Work</span>
+                    </span>
+                    <span class="corner">
+                        <svg viewBox="0 0 10 10"><path d="M0.5 0.2 L0.5 9.2 M0.2 0.5 L9.2 0.5" class="corner-svg"/></svg>
+                    </span>
+                </a>
+                <a href="#contact" class="btn">
+                    <span class="dot"></span>
+                    <span class="label-wrap">
+                        <span class="default-text">Let's Talk</span>
+                        <span class="hover-text">Let's Talk</span>
+                    </span>
+                    <span class="corner">
+                        <svg viewBox="0 0 10 10"><path d="M0.5 0.2 L0.5 9.2 M0.2 0.5 L9.2 0.5" class="corner-svg"/></svg>
+                    </span>
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="number">12+</span>
+                    <span class="label">Years in Tech</span>
+                </div>
+                <div class="stat">
+                    <span class="number">8</span>
+                    <span class="label">AI Projects</span>
+                </div>
+                <div class="stat">
+                    <span class="number">4</span>
+                    <span class="label">Patent Filings</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== EXPERTISE ===== -->
+    <section id="expertise">
+        <div class="container">
+            <div class="section-label">
+                <span class="label">Core Capabilities</span>
+                <span class="line"></span>
+            </div>
+            <h2 class="h2 section-title">Where I build.</h2>
+            <p class="body section-desc">
+                From autonomous agents to scalable AI infrastructure — I bridge the gap
+                between research and production.
+            </p>
+
+            <div class="expertise-grid">
+                <div class="expertise-item">
+                    <span class="icon">🧠</span>
+                    <h4>Agentic AI</h4>
+                    <p>Multi‑agent systems, reasoning, tool‑use, and autonomous decisions.</p>
+                </div>
+                <div class="expertise-item">
+                    <span class="icon">⚙️</span>
+                    <h4>AI Infrastructure</h4>
+                    <p>Scalable pipelines, MLOps, model serving, real‑time inference.</p>
+                </div>
+                <div class="expertise-item">
+                    <span class="icon">🔗</span>
+                    <h4>System Architecture</h4>
+                    <p>Distributed, microservices, event‑driven, cloud‑native.</p>
+                </div>
+                <div class="expertise-item">
+                    <span class="icon">📡</span>
+                    <h4>Data &amp; Integration</h4>
+                    <p>ETL, vector DB, semantic search, API ecosystems.</p>
+                </div>
+                <div class="expertise-item">
+                    <span class="icon">🔐</span>
+                    <h4>Security &amp; Governance</h4>
+                    <p>AI safety, responsible AI, access control, compliance.</p>
+                </div>
+                <div class="expertise-item">
+                    <span class="icon">🚀</span>
+                    <h4>Technical Leadership</h4>
+                    <p>Mentoring, architecture reviews, strategy, R&amp;D.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PORTFOLIO (Swiper Carousel) ===== -->
+    <section id="portfolio" style="background:rgba(255,255,255,0.015);">
+        <div class="container">
+            <div class="section-label">
+                <span class="label">Selected Work</span>
+                <span class="line"></span>
+            </div>
+            <h2 class="h2 section-title">Projects that move the needle.</h2>
+            <p class="body section-desc">
+                Each project represents a step toward more intelligent, autonomous systems
+                that solve real‑world problems.
+            </p>
+
+            <div class="portfolio-wrapper">
+                <div class="swiper" id="portfolioSwiper">
+                    <div class="swiper-wrapper">
+                        <!-- Slide 1 -->
+                        <div class="swiper-slide">
+                            <div class="portfolio-card">
+                                <span class="tag">Agentic AI</span>
+                                <h3>Autonomous Research Agent</h3>
+                                <p>Multi‑agent system that conducts literature review, synthesizes findings, and generates research briefs with cited sources.</p>
+                                <span class="meta">Python · LangChain · Vector DB · LLM</span>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="swiper-slide">
+                            <div class="portfolio-card">
+                                <span class="tag">Infrastructure</span>
+                                <h3>Real‑time ML Pipeline</h3>
+                                <p>Event‑driven pipeline processing 10M+ daily events with sub‑second inference latency for fraud detection.</p>
+                                <span class="meta">Kafka · Spark · Kubernetes · Triton</span>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="swiper-slide">
+                            <div class="portfolio-card">
+                                <span class="tag">System Design</span>
+                                <h3>Semantic Search Platform</h3>
+                                <p>Enterprise‑grade search over 50M+ documents using hybrid retrieval (sparse + dense) with reranking.</p>
+                                <span class="meta">Elasticsearch · Pinecone · FastAPI · React</span>
+                            </div>
+                        </div>
+                        <!-- Slide 4 -->
+                        <div class="swiper-slide">
+                            <div class="portfolio-card">
+                                <span class="tag">AI Safety</span>
+                                <h3>Guardrail Framework</h3>
+                                <p>Open‑source library for enforcing safety policies on LLM outputs with constraint‑based validation.</p>
+                                <span class="meta">Python · Pydantic · OpenTelemetry</span>
+                            </div>
+                        </div>
+                        <!-- Slide 5 -->
+                        <div class="swiper-slide">
+                            <div class="portfolio-card">
+                                <span class="tag">Agentic AI</span>
+                                <h3>Multi‑Agent Orchestrator</h3>
+                                <p>Orchestrates specialized agents for complex workflows with dynamic task routing and human‑in‑the‑loop.</p>
+                                <span class="meta">Python · FastAPI · Redis · LLM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-nav">
+                    <button class="btn" id="swiperPrev">
+                        <span class="corner" style="transform:rotate(180deg);">
+                            <svg viewBox="0 0 10 10"><path d="M0.5 0.2 L0.5 9.2 M0.2 0.5 L9.2 0.5" class="corner-svg"/></svg>
+                        </span>
+                        <span class="label-wrap">
+                            <span class="default-text">Prev</span>
+                            <span class="hover-text">Prev</span>
+                        </span>
+                    </button>
+                    <button class="btn" id="swiperNext">
+                        <span class="label-wrap">
+                            <span class="default-text">Next</span>
+                            <span class="hover-text">Next</span>
+                        </span>
+                        <span class="corner">
+                            <svg viewBox="0 0 10 10"><path d="M0.5 0.2 L0.5 9.2 M0.2 0.5 L9.2 0.5" class="corner-svg"/></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CERTIFICATIONS ===== -->
+    <section id="certs">
+        <div class="container">
+            <div class="section-label">
+                <span class="label">Credentials</span>
+                <span class="line"></span>
+            </div>
+            <h2 class="h2 section-title">Certified for the future.</h2>
+            <p class="body section-desc">
+                Continuous learning is part of the craft. Here are some of the milestones
+                that shape my approach.
+            </p>
+
+            <div class="certs-grid">
+                <span class="cert-badge"><span class="highlight">✦</span> Agentic AI Certification</span>
+                <span class="cert-badge"><span class="highlight">✦</span> AWS Solutions Architect</span>
+                <span class="cert-badge"><span class="highlight">✦</span> Kubernetes Administrator (CKA)</span>
+                <span class="cert-badge"><span class="highlight">✦</span> TensorFlow Developer</span>
+                <span class="cert-badge"><span class="highlight">✦</span> TOGAF 9 Certified</span>
+                <span class="cert-badge"><span class="highlight">✦</span> Responsible AI Practitioner</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-label">
+                <span class="label">Connect</span>
+                <span class="line"></span>
+            </div>
+            <h2 class="h2 section-title">Let's build something extraordinary.</h2>
+            <p class="body section-desc">
+                Whether it's a new AI venture, an architectural review, or a speaking opportunity —
+                I'm always open to meaningful conversations.
+            </p>
+
+            <div class="contact-grid">
+                <div class="info">
+                    <p class="mono" style="font-size:1.1rem;color:var(--neural-fog);margin-bottom:4px;">
+                        principal.architect@example.com
+                    </p>
+                    <p class="body-sm" style="margin-bottom:16px;">
+                        Based in San Francisco · Remote · Global
+                    </p>
+                    <p class="body-sm">
+                        I respond within 24 hours. Let's start with a brief intro about
+                        your vision and the problem you're solving.
+                    </p>
+                </div>
+
+                <div class="links">
+                    <a href="#"><span class="arrow">→</span> LinkedIn</a>
+                    <a href="#"><span class="arrow">→</span> GitHub</a>
+                    <a href="#"><span class="arrow">→</span> ResearchGate</a>
+                    <a href="#"><span class="arrow">→</span> Calendly (30 min)</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 · Principal Architect</span>
+                <span>
+                    <a href="#">LinkedIn</a> · <a href="#">GitHub</a> · <a href="#">RSS</a>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== LIBRARIES ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // 1. THREE.JS — HERO 3D BACKGROUND (subtle particle + geometry)
+        // ============================================================
+        (function() {
+            const container = document.getElementById('heroCanvas');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            scene.background = null; // transparent
+
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 6);
+
+            const renderer = new THREE.WebGLRenderer({
+                alpha: true,
+                antialias: true
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Lights
+            const ambient = new THREE.AmbientLight(0x404060);
+            scene.add(ambient);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(2, 3, 4);
+            scene.add(dirLight);
+            const backLight = new THREE.DirectionalLight(0x3cdbd5, 0.4);
+            backLight.position.set(-2, -1, -3);
+            scene.add(backLight);
+
+            // Particles
+            const particleCount = 400;
+            const posArray = new Float32Array(particleCount * 3);
+            const colorsArray = new Float32Array(particleCount * 3);
+            const colorTeal = new THREE.Color(0x3cdbd5);
+            const colorInfra = new THREE.Color(0xe85d4a);
+            for (let i = 0; i < particleCount; i++) {
+                const radius = 3 + Math.random() * 4;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                posArray[i * 3] = Math.sin(phi) * Math.cos(theta) * radius;
+                posArray[i * 3 + 1] = Math.sin(phi) * Math.sin(theta) * radius;
+                posArray[i * 3 + 2] = Math.cos(phi) * radius;
+                const mix = Math.random();
+                const c = mix < 0.5 ? colorTeal.clone().lerp(new THREE.Color(0xffffff), Math.random() * 0.5) :
+                    colorInfra.clone().lerp(new THREE.Color(0xffffff), Math.random() * 0.4);
+                colorsArray[i * 3] = c.r;
+                colorsArray[i * 3 + 1] = c.g;
+                colorsArray[i * 3 + 2] = c.b;
+            }
+            const particleGeo = new THREE.BufferGeometry();
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particleGeo.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+            const particleMat = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.7,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+            });
+            const particles = new THREE.Points(particleGeo, particleMat);
+            scene.add(particles);
+
+            // Small floating torus knot (agentic core)
+            const knotGeo = new THREE.TorusKnotGeometry(1.2, 0.4, 80, 12);
+            const knotMat = new THREE.MeshStandardMaterial({
+                color: 0x3cdbd5,
+                emissive: 0x3cdbd5,
+                emissiveIntensity: 0.15,
+                roughness: 0.3,
+                metalness: 0.5,
+                transparent: true,
+                opacity: 0.5,
+            });
+            const knot = new THREE.Mesh(knotGeo, knotMat);
+            scene.add(knot);
+
+            // Mouse parallax
+            let mouseX = 0,
+                mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 0.4;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 0.4;
+            });
+
+            function resize() {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            }
+            window.addEventListener('resize', resize);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.0005;
+                particles.rotation.x += 0.0002;
+                knot.rotation.x += 0.005;
+                knot.rotation.y += 0.008;
+                camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
+                camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.02;
+                camera.lookAt(0, 0, 0);
+                renderer.render(scene, camera);
+            }
+            animate();
+        })();
+
+        // ============================================================
+        // 2. GSAP + SCROLLTRIGGER — SECTION REVEALS & PIN EFFECTS
+        // ============================================================
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero stats appear on load
+        gsap.from('.hero-stats', {
+            opacity: 0,
+            y: 40,
+            duration: 1.2,
+            ease: 'power4.out',
+            delay: 0.4
+        });
+
+        // Expertise items: staggered fade-up
+        gsap.from('.expertise-item', {
+            scrollTrigger: {
+                trigger: '#expertise',
+                start: 'top 75%',
+            },
+            opacity: 0,
+            y: 40,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'power3.out'
+        });
+
+        // Portfolio cards (inside swiper) – we'll animate the swiper wrapper
+        gsap.from('.portfolio-wrapper', {
+            scrollTrigger: {
+                trigger: '#portfolio',
+                start: 'top 80%',
+            },
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: 'power3.out'
+        });
+
+        // Cert badges: staggered
+        gsap.from('.cert-badge', {
+            scrollTrigger: {
+                trigger: '#certs',
+                start: 'top 80%',
+            },
+            opacity: 0,
+            x: -20,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: 'power2.out'
+        });
+
+        // Contact section: fade
+        gsap.from('.contact-grid', {
+            scrollTrigger: {
+                trigger: '#contact',
+                start: 'top 80%',
+            },
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            ease: 'power3.out'
+        });
+
+        // ============================================================
+        // 3. SWIPER — PORTFOLIO CAROUSEL
+        // ============================================================
+        const swiper = new Swiper('#portfolioSwiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 24,
+            centeredSlides: false,
+            grabCursor: true,
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 32,
+                }
+            }
+        });
+
+        document.getElementById('swiperPrev').addEventListener('click', () => swiper.slidePrev());
+        document.getElementById('swiperNext').addEventListener('click', () => swiper.slideNext());
+
+        // ============================================================
+        // 4. UI HELPERS (header scroll, mobile nav, smooth scroll)
+        // ============================================================
+        (function() {
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 30);
+            }, { passive: true });
+
+            const toggle = document.getElementById('navToggle');
+            const nav = document.getElementById('nav');
+            toggle.addEventListener('click', () => {
+                nav.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', nav.classList.contains('open'));
+            });
+            nav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    nav.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        const offset = parseInt(getComputedStyle(document.documentElement)
+                            .getPropertyValue('--header-height')) || 64;
+                        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
